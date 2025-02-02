@@ -1,0 +1,73 @@
+/* General Section Styling */
+.section-box {
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+/* Earnings Summary Section */
+.payment-summary {
+    background-color: #f0f8ff;
+    border: 1px solid #d0e7ff;
+}
+
+/* Deduction Options Section */
+.deduction-options {
+    background-color: #e9f7ef;
+    border: 1px solid #d8ffd0;
+}
+
+/* Payment Information Section */
+.payment-info {
+    background-color: #f8f9fa;
+    border: 1px solid #e0e0e0;
+}
+
+/* Green Button Styling */
+.btn-green {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-green:hover {
+    background-color: #218838;
+}
+
+.btn-green:disabled {
+    background-color: #d3d3d3;
+    cursor: not-allowed;
+}
+
+/* Input fields */
+input[type="text"], input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Error Message Styling */
+.error-message {
+    color: red;
+    font-size: 0.9rem;
+    display: none;
+}
+
+/* Centered container styling */
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}

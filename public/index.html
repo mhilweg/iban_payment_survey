@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Survey</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2 class="text-center">Payment Survey</h2>
+    <hr>
+
+    <!-- Session & Participant Information -->
+    <div class="section-box payment-summary">
+        <p><strong>Session ID:</strong> <span id="session-id-display">N/A</span></p>
+        <p><strong>Participant ID:</strong> <span id="participant-id-display">N/A</span></p>
+    </div>
+
+    <!-- Payment Form Section -->
+    <form id="payment-form">
+        <div class="section-box payment-info">
+            <h3>Enter Your Payment Information</h3>
+
+            <input type="hidden" id="session-id" name="session_id">
+            <input type="hidden" id="participant-id" name="participant_id">
+
+            <div class="form-group">
+                <label for="name">Full Name:</label>
+                <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address:</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+            </div>
+
+            <div class="form-group">
+                <label for="iban">IBAN:</label>
+                <input type="text" id="iban" name="iban" placeholder="Enter your IBAN" required>
+                <div id="iban-error" class="error-message">Invalid IBAN. Please enter a valid IBAN.</div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="text-center mt-3">
+            <button type="button" class="btn-green" id="validate-button">Validate</button>
+            <button type="submit" class="btn-green" id="submit-button" disabled>Submit</button>
+            <div id="message" style="margin-top: 10px;"></div>
+        </div>
+    </form>
+</div>
+
+<script src="/script.js"></script>
+</body>
+</html>
