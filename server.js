@@ -1,17 +1,24 @@
 require("dotenv").config();
 const express = require("express");
-const { Pool } = require("pg");
 
 const app = express();
+const { Pool } = require('pg');
 
-// Use a connection object instead of a connection string
 const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'wu_payment_survey',
-    password: 'admin',  // Replace with your actual PostgreSQL password
-    port: 5432          // Default PostgreSQL port
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,  // Required for Heroku's Postgres
+  },
 });
+
+pool.query('SELECT NOW()', (err, res) => {
+  if (err) {
+    console.error('Database connection error:', err);
+  } else {
+    console.log('Database connected successfully:', res.rows);
+  }
+});
+
 
 // Middleware setup
 app.use(express.static("public", { extensions: ['html', 'css', 'js'] }));
