@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const message = document.getElementById("message");
             if (response.ok) {
-                message.textContent = "Submission successful!";
+                message.textContent = "Submission successful! Please wait until you are told to go back to your seat.";
                 form.reset();
                 submitButton.disabled = true;  // Disable submit after success
             } else {
