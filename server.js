@@ -11,6 +11,15 @@ const pool = new Pool({
   },
 });
 
+// Ensure we're querying the correct schema
+pool.query('SET search_path TO public', (err) => {
+  if (err) {
+    console.error('Failed to set search_path:', err);
+  } else {
+    console.log('search_path set to public schema');
+  }
+});
+
 pool.query('SELECT NOW()', (err, res) => {
   if (err) {
     console.error('Database connection error:', err);
