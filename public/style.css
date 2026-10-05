@@ -78,3 +78,10 @@ input[type="text"], input[type="email"] {
     margin-top: 15px;
     text-decoration: none;
 }
+
+/* Explanatory text under an input field */
+.field-hint {
+    color: #555;
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+}

@@ -25,6 +25,7 @@
 
             <input type="hidden" id="session-id" name="session_id">
             <input type="hidden" id="participant-id" name="participant_id">
+            <input type="hidden" id="university" name="university">
 
             <div class="form-group">
                 <label for="name">Full Name:</label>
@@ -41,6 +42,14 @@
                 <input type="text" id="iban" name="iban" placeholder="Enter your IBAN" required>
                 <div id="iban-error" class="error-message">Invalid IBAN. Please enter a valid IBAN.</div>
             </div>
+
+            <!-- Tax identification number: only shown (and required) when the experiment runs at HU Berlin -->
+            <div class="form-group" id="tax-id-group" style="display: none;">
+                <label for="tax-id">Tax identification number (Steuer-ID):</label>
+                <input type="text" id="tax-id" name="tax_id" placeholder="11 digits, e.g. 12 345 678 901" inputmode="numeric" autocomplete="off">
+                <div class="field-hint">Your 11-digit German tax identification number (steuerliche Identifikationsnummer), as printed on your income tax documents.</div>
+                <div id="tax-id-error" class="error-message">Invalid tax identification number. Please enter your 11-digit Steuer-ID.</div>
+            </div>
         </div>
 
         <!-- Action Buttons -->
@@ -54,6 +63,7 @@
     </form>
 </div>
 
+<script src="/tax-id.js"></script>
 <script src="/script.js"></script>
 </body>
 </html>

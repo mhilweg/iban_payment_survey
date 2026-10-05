@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const isValidGermanTaxId = require("./public/tax-id.js");
 
 const app = express();
 const { Pool } = require('pg');
@@ -28,6 +29,14 @@ pool.query('SELECT NOW()', (err, res) => {
   }
 });
 
+// The tax identification number is only collected at HU Berlin; make sure the column exists
+// (older deployments created the table without it). Empty for all other sites.
+pool.query('ALTER TABLE survey_responses ADD COLUMN IF NOT EXISTS tax_id TEXT', (err) => {
+  if (err) {
+    console.error('Failed to ensure tax_id column exists:', err);
+  }
+});
+
 
 // Middleware setup
 app.use(express.static("public", { extensions: ['html', 'css', 'js'] }));
@@ -49,17 +58,27 @@ app.post("/api/submit", async (req, res) => {
         // Log incoming JSON data to verify structure
         console.log("Received form data:", req.body);
 
-        const { session_id, participant_id, name, email, iban } = req.body;
+        const { session_id, participant_id, name, email, iban, university } = req.body;
 
         if (!session_id || !participant_id || !name || !email || !iban) {
             console.error("Missing required fields in request data");
             return res.status(400).send("Bad Request: Missing required fields");
         }
 
+        // Tax identification number: required and validated at HU Berlin only, stored as NULL elsewhere
+        let tax_id = null;
+        if (university === "hu_berlin") {
+            tax_id = String(req.body.tax_id || "").replace(/[\s/-]/g, "");
+            if (!isValidGermanTaxId(tax_id)) {
+                console.error("Missing or invalid tax_id for HU Berlin submission");
+                return res.status(400).send("Bad Request: Missing or invalid tax identification number");
+            }
+        }
+
         // Insert data into the database
         await pool.query(
-            "INSERT INTO survey_responses (session_id, participant_id, name, email, iban) VALUES ($1, $2, $3, $4, $5)",
-            [session_id, participant_id, name, email, iban]
+            "INSERT INTO survey_responses (session_id, participant_id, name, email, iban, tax_id) VALUES ($1, $2, $3, $4, $5, $6)",
+            [session_id, participant_id, name, email, iban, tax_id]
         );
 
         res.status(200).send("Data submitted successfully");
