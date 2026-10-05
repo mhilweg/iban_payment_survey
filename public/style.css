@@ -71,3 +71,10 @@ input[type="text"], input[type="email"] {
     margin: 0 auto;
     padding: 20px;
 }
+
+/* Return-to-experiment button (non-donors who fill in the survey on their own terminal) */
+.return-button {
+    display: inline-block;
+    margin-top: 15px;
+    text-decoration: none;
+}

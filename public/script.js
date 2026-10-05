@@ -18,6 +18,29 @@ document.addEventListener("DOMContentLoaded", () => {
     sessionIdInput.value = sessionId;
     participantIdInput.value = participantId;
 
+    // Optional return URL (passed by the experiment for participants who fill in the survey on their
+    // own terminal). Only URLs pointing back to the experiment server are accepted.
+    const allowedReturnOrigins = [
+        "https://charity-lab-9f7c7b493bc8.herokuapp.com",
+        "http://localhost:8000",
+        "http://127.0.0.1:8000"
+    ];
+    let returnUrl = null;
+    const rawReturnUrl = urlParams.get("return_url");
+    if (rawReturnUrl) {
+        try {
+            const parsed = new URL(rawReturnUrl);
+            if (allowedReturnOrigins.includes(parsed.origin)) {
+                returnUrl = parsed.href;
+            } else {
+                console.warn("Ignoring return_url with unexpected origin:", parsed.origin);
+            }
+        } catch {
+            console.warn("Ignoring malformed return_url:", rawReturnUrl);
+        }
+    }
+    const returnButton = document.getElementById("return-button");
+
     // IBAN country-specific lengths
     const ibanCountryLengths = {
         AD: 24, AT: 20, BE: 16, BG: 22, CH: 21, CY: 28, CZ: 24, DE: 22, DK: 18,
@@ -87,9 +110,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const message = document.getElementById("message");
             if (response.ok) {
-                message.textContent = "Submission successful! Please wait until you are told to go back to your seat.";
                 form.reset();
                 submitButton.disabled = true;  // Disable submit after success
+                if (returnUrl) {
+                    // Participant came from their own terminal: send them back to the experiment
+                    message.textContent = "Submission successful! Click the button below to return to the experiment.";
+                    returnButton.href = returnUrl;
+                    returnButton.style.display = "inline-block";
+                } else {
+                    // Dedicated computer: unchanged behaviour
+                    message.textContent = "Submission successful! Please wait until you are told to go back to your seat.";
+                }
             } else {
                 message.textContent = "An error occurred. Please try again.";
             }

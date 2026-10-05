@@ -69,6 +69,25 @@ app.post("/api/submit", async (req, res) => {
     }
 });
 
+// Status endpoint: lets the oTree experiment verify that a participant has submitted payment data.
+// Returns only a boolean, never any personal data.
+app.get("/api/status", async (req, res) => {
+    const { session_id, participant_id } = req.query;
+    if (!session_id || !participant_id) {
+        return res.status(400).json({ error: "Missing session_id or participant_id" });
+    }
+    try {
+        const result = await pool.query(
+            "SELECT 1 FROM survey_responses WHERE session_id = $1 AND participant_id = $2 LIMIT 1",
+            [session_id, participant_id]
+        );
+        res.json({ submitted: result.rowCount > 0 });
+    } catch (error) {
+        console.error("Error checking submission status:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
