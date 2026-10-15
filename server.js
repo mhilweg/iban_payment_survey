@@ -29,6 +29,23 @@ pool.query('SELECT NOW()', (err, res) => {
 });
 
 
+// Create the responses table on first start (the Heroku Postgres add-on starts out empty).
+pool.query(`CREATE TABLE IF NOT EXISTS survey_responses (
+    id SERIAL PRIMARY KEY,
+    session_id TEXT NOT NULL,
+    participant_id TEXT NOT NULL,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    iban TEXT NOT NULL,
+    submitted_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+)`, (err) => {
+  if (err) {
+    console.error('Failed to ensure survey_responses table exists:', err);
+  } else {
+    console.log('survey_responses table ready');
+  }
+});
+
 // Middleware setup
 app.use(express.static("public", { extensions: ['html', 'css', 'js'] }));
 app.use(express.json());  // Handle JSON payloads directly
