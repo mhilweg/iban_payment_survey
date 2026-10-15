@@ -3,12 +3,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const participantIdDisplay = document.getElementById("participant-id-display");
     const sessionIdInput = document.getElementById("session-id");
     const participantIdInput = document.getElementById("participant-id");
-    const universityInput = document.getElementById("university");
     const ibanInput = document.getElementById("iban");
     const ibanError = document.getElementById("iban-error");
-    const taxIdGroup = document.getElementById("tax-id-group");
-    const taxIdInput = document.getElementById("tax-id");
-    const taxIdError = document.getElementById("tax-id-error");
     const submitButton = document.getElementById("submit-button");
     const validateButton = document.getElementById("validate-button");
 
@@ -21,16 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
     participantIdDisplay.textContent = participantId || "N/A";
     sessionIdInput.value = sessionId;
     participantIdInput.value = participantId;
-
-    // Site the experiment is run at (passed by the experiment from its session config).
-    // The tax identification number is only collected at HU Berlin.
-    const university = urlParams.get("university") || "";
-    const taxIdRequired = university === "hu_berlin";
-    universityInput.value = university;
-    if (taxIdRequired) {
-        taxIdGroup.style.display = "block";
-        taxIdInput.required = true;
-    }
 
     // Optional return URL (passed by the experiment for participants who fill in the survey on their
     // own terminal). Only URLs pointing back to the experiment server are accepted.
@@ -89,18 +75,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Validate button logic: IBAN always, tax ID only when it is collected at this site
+    // Validate button logic
     validateButton.addEventListener("click", () => {
-        const ibanOk = isValidIBAN(ibanInput.value);
-        ibanError.style.display = ibanOk ? "none" : "block";
-
-        let taxIdOk = true;
-        if (taxIdRequired) {
-            taxIdOk = isValidGermanTaxId(taxIdInput.value);
-            taxIdError.style.display = taxIdOk ? "none" : "block";
+        if (isValidIBAN(ibanInput.value)) {
+            ibanError.style.display = "none";
+            submitButton.disabled = false;
+        } else {
+            ibanError.style.display = "block";
+            submitButton.disabled = true;
         }
-
-        submitButton.disabled = !(ibanOk && taxIdOk);
     });
 
     // Form submission
@@ -115,10 +98,6 @@ document.addEventListener("DOMContentLoaded", () => {
             email: form.elements["email"].value,
             iban: ibanInput.value
         };
-        if (taxIdRequired) {
-            data.university = university;
-            data.tax_id = taxIdInput.value.replace(/[\s/-]/g, "");
-        }
 
         console.log("Submitting data:", data);
 
