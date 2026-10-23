@@ -37,12 +37,26 @@ pool.query(`CREATE TABLE IF NOT EXISTS survey_responses (
     name TEXT NOT NULL,
     email TEXT NOT NULL,
     iban TEXT NOT NULL,
+    city TEXT,
+    zip_code TEXT,
     submitted_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 )`, (err) => {
   if (err) {
     console.error('Failed to ensure survey_responses table exists:', err);
   } else {
     console.log('survey_responses table ready');
+  }
+});
+
+// City and ZIP code were added on 2026-10-23; add the columns to an existing table without a reset.
+// They stay nullable because rows collected before that date have no address data.
+pool.query(`ALTER TABLE survey_responses
+    ADD COLUMN IF NOT EXISTS city TEXT,
+    ADD COLUMN IF NOT EXISTS zip_code TEXT`, (err) => {
+  if (err) {
+    console.error('Failed to add city/zip_code columns:', err);
+  } else {
+    console.log('survey_responses city/zip_code columns ready');
   }
 });
 
@@ -67,16 +81,18 @@ app.post("/api/submit", async (req, res) => {
         console.log("Received form data:", req.body);
 
         const { session_id, participant_id, name, email, iban } = req.body;
+        const city = typeof req.body.city === "string" ? req.body.city.trim() : "";
+        const zip_code = typeof req.body.zip_code === "string" ? req.body.zip_code.trim() : "";
 
-        if (!session_id || !participant_id || !name || !email || !iban) {
+        if (!session_id || !participant_id || !name || !email || !iban || !city || !zip_code) {
             console.error("Missing required fields in request data");
             return res.status(400).send("Bad Request: Missing required fields");
         }
 
         // Insert data into the database
         await pool.query(
-            "INSERT INTO survey_responses (session_id, participant_id, name, email, iban) VALUES ($1, $2, $3, $4, $5)",
-            [session_id, participant_id, name, email, iban]
+            "INSERT INTO survey_responses (session_id, participant_id, name, email, iban, city, zip_code) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+            [session_id, participant_id, name, email, iban, city, zip_code]
         );
 
         res.status(200).send("Data submitted successfully");

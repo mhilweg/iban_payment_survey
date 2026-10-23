@@ -96,6 +96,8 @@ document.addEventListener("DOMContentLoaded", () => {
             participant_id: participantIdInput.value,
             name: form.elements["name"].value,
             email: form.elements["email"].value,
+            city: form.elements["city"].value,
+            zip_code: form.elements["zip_code"].value,
             iban: ibanInput.value
         };
 
